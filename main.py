@@ -16,7 +16,6 @@ def flask_print(msg):
     global flask_output
     flask_output.append(msg)
     print(msg)
-    display()
 
 # Function to display flask logs
 @app.route('/')
@@ -44,6 +43,7 @@ def send_notification(message):
 		flask_print(f"{current_time()} Log: Notification sent")
 	else:
 		flask_print(f"{current_time()} Log: Notification failed {req.status_code}")
+	display()
 
 # Get next hour price for electricity spot pricces
 # RETURN: snt / h
@@ -59,6 +59,7 @@ def price_for_next_hour():
 			if next.hour == start_time.hour:
 				price = round(calculate_actual_price(hour_data['value']), 2)
 				flask_print(f"{current_time()} Log: {start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}: {price}snt/kWh")
+				display()
 
 				return price
 
@@ -69,6 +70,7 @@ def get_btc_price():
 	data = response.json()
 	price = round(data['bpi']['EUR']['rate_float'], 2)
 	flask_print(f"{current_time()} Log: btc price: {price}€/btc")
+	display()
 	
 	return price
 
@@ -87,6 +89,7 @@ def get_profitability():
     bitcoin_price = round(get_btc_price(), 2)
     profitability = round((((sum(last_hour) / len(last_hour)) * bitcoin_price) / 24), 2)
     flask_print(f"{current_time()} Log: Profitability for next hour {profitability}€/h")
+    display()
     
     return profitability
 
@@ -99,6 +102,7 @@ def background_task():
 		cost = (price_for_next_hour() / 100)
 		profit = round(income - cost, 2)
 		flask_print(f"{current_time()} Log: income:{income}€ - cost:{cost}€ = {profit}€/hour")
+		display()
 		if (profit < max_price):
 			send_notification(f"Price check: \U0000274C")
 		else:
