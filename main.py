@@ -106,7 +106,6 @@ def background_task():
 # Define constants
 pushover_url = 'https://api.pushover.net/1/messages.json'
 nicehas_url = 'https://api2.nicehash.com'
-flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + tax
 end_of_hour = 50					# minutes
@@ -124,8 +123,14 @@ pushover_user = os.getenv("PUSHOVER_USER")
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
 
+# flask stuff
+flask_output = []
+@app.route('/')
+def home():
+    return "Starting script..."
+
 # running flask app
 if __name__ == "__main__":
     thread = threading.Thread(target=background_task)
     thread.start()
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
