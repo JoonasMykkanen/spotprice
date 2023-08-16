@@ -80,7 +80,7 @@ def get_profitability():
     last_hour = []
     start = datetime.now(pytz.timezone('Europe/Helsinki'))
     
-    while start.hour != end_of_hour:
+    while start.minute != end_of_hour:
         start = datetime.now(pytz.timezone('Europe/Helsinki'))
         miner = nicehash_api.get_rigs()
         last_hour.append(miner['totalProfitability'])
@@ -107,6 +107,7 @@ def background_task():
 			send_notification(f"Price check: \U0000274C")
 		else:
 			send_notification(f"Price check: \U00002705")
+		clock.sleep(60)
    
 # start app
 def main():
@@ -118,7 +119,7 @@ pushover_url = 'https://api.pushover.net/1/messages.json'
 nicehas_url = 'https://api2.nicehash.com'
 flask_output = []
 finland = ['FI']
-electricity_transfer = 4.69 + 2.79	# transfer + tax
+electricity_transfer = 4.69 + 2.79	# transfer + VAT
 end_of_hour = 50					# minutes
 max_price = 0.1						# eur / kWh
 
