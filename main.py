@@ -102,7 +102,7 @@ def background_task():
 			send_notification(f"Price check: \U0000274C")
 		else:
 			send_notification(f"Price check: \U00002705")
-		# clock.sleep(61)
+		clock.sleep(61)
    
 # start app
 def main():
@@ -116,7 +116,7 @@ flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
 # TODO: change end_of_hour back to 50
-end_of_hour = 10					# minutes
+end_of_hour = 25					# minutes
 max_price = 0.1						# eur / kWh
 
 # getting env variables
