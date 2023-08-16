@@ -6,6 +6,7 @@ import time as clock
 import threading
 import requests
 import nicehash
+import logging
 import pytz
 import os
 
@@ -21,6 +22,7 @@ def flask_print(msg):
 @app.route('/')
 def display():
     global flask_output
+    app.logger.debug('Display called')
     return render_template_string('<br>'.join(flask_output))
 
 @app.route('/debug')
@@ -133,10 +135,11 @@ pushover_user = os.getenv("PUSHOVER_USER")
 # init
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
+logging.basicConfig(level=logging.DEBUG)
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
 	main()
-	app.run(host='127.0.0.1', port=8080, threaded=True, debug=False)
+	app.run(host='127.0.0.1', port=8080, debug=False)
 else:
     main()
