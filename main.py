@@ -16,9 +16,10 @@ def flask_print(msg):
     global flask_output
     flask_output.append(msg)
     print(msg)
+    display()
 
 # Function to display flask logs
-@app.route('/output')
+@app.route('/')
 def display():
     global flask_output
     return render_template_string('<br>'.join(flask_output))
@@ -58,7 +59,7 @@ def price_for_next_hour():
 			if next.hour == start_time.hour:
 				price = round(calculate_actual_price(hour_data['value']), 2)
 				flask_print(f"{current_time()} Log: {start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}: {price}snt/kWh")
-    
+
 				return price
 
 # Retrives current btc price
@@ -106,6 +107,7 @@ def background_task():
 # Define constants
 pushover_url = 'https://api.pushover.net/1/messages.json'
 nicehas_url = 'https://api2.nicehash.com'
+flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + tax
 end_of_hour = 50					# minutes
@@ -123,11 +125,6 @@ pushover_user = os.getenv("PUSHOVER_USER")
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
 
-# flask stuff
-flask_output = []
-@app.route('/')
-def home():
-    return "Starting script..."
 
 # running flask app
 if __name__ == "__main__":
