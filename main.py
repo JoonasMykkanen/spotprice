@@ -23,6 +23,8 @@ def flask_print(msg):
 def display():
     global flask_output
     app.logger.debug('Display called')
+    if not flask_output:
+        return "No logs to display"
     return render_template_string('<br>'.join(flask_output))
 
 @app.route('/debug')
