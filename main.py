@@ -2,6 +2,7 @@ from flask import Flask, render_template_string
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from nordpool import elspot
+from queue import Queue
 import time as clock
 import threading
 import requests
@@ -14,16 +15,18 @@ app = Flask(__name__)
 
 # Custom print function to also store logs in flask
 def flask_print(msg):
-    global flask_output
-    flask_output.append(msg)
+    log_queue.put(msg)
+    app.logger.debug('put que ok')
     print(msg)
 
 # Function to display flask logs
 @app.route('/')
 def display():
-    global flask_output
     app.logger.debug('Display called')
-    if not flask_output:
+    logs = []
+    while not log_queue.empty():
+        logs.append(log_queue.get())
+    if not logs:
         return "No logs to display"
     return render_template_string('<br>'.join(flask_output))
 
@@ -138,6 +141,7 @@ pushover_user = os.getenv("PUSHOVER_USER")
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
 logging.basicConfig(level=logging.DEBUG)
+log_queue = Queue()
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
