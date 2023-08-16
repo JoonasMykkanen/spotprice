@@ -95,6 +95,7 @@ nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nice
 nordpool_api = elspot.Prices(currency='EUR')
 
 running = True
+send_notification("Starting script")
 while running == True:
 	income = get_profitability()
 	cost = (price_for_next_hour() / 100)
