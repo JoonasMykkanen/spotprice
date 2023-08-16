@@ -107,6 +107,11 @@ def background_task():
 			send_notification(f"Price check: \U0000274C")
 		else:
 			send_notification(f"Price check: \U00002705")
+   
+# start app
+def main():
+	thread = threading.Thread(target=background_task)
+	thread.start()
 
 # Define constants
 pushover_url = 'https://api.pushover.net/1/messages.json'
@@ -129,9 +134,5 @@ pushover_user = os.getenv("PUSHOVER_USER")
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
 
-
-# running flask app
-if __name__ == "__main__":
-    thread = threading.Thread(target=background_task)
-    thread.start()
-    app.run(debug=False, host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+# running app
+main()
