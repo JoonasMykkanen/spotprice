@@ -10,7 +10,7 @@ import os
 # Get timestamp for logs
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
 
-# Convert eur / MWh to snt / KWh and also add alv 24%
+# Convert eur / MWh to snt / KWh and also add VAT 24%
 # also add transfer costs of electricity
 def calculate_actual_price( price ): return ((price / 10) * 1.24) + electricity_transfer
 
