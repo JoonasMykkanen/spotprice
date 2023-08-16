@@ -128,4 +128,4 @@ nordpool_api = elspot.Prices(currency='EUR')
 if __name__ == "__main__":
     thread = threading.Thread(target=background_task)
     thread.start()
-    app.run(debug=True)
+    app.run()
