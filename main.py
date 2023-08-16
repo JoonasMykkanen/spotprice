@@ -116,7 +116,8 @@ nicehas_url = 'https://api2.nicehash.com'
 flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
-end_of_hour = 50					# minutes
+# TODO: change end_of_hour back to 50
+end_of_hour = 20					# minutes
 max_price = 0.1						# eur / kWh
 
 # getting env variables
