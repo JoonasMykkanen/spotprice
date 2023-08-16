@@ -104,7 +104,7 @@ def background_task():
 			send_notification(f"Price check: \U00002705")
 		clock.sleep(61)
    
-# start app
+# start app in it's own thread
 def main():
 	thread = threading.Thread(target=background_task)
 	thread.start()
@@ -115,9 +115,8 @@ nicehas_url = 'https://api2.nicehash.com'
 flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
-# TODO: change end_of_hour back to 50
-end_of_hour = 25					# minutes
-max_price = 0.1						# eur / kWh
+end_of_hour = 50					# minutes
+max_price = 0.14					# eur / kWh
 
 # getting env variables
 load_dotenv()
