@@ -23,6 +23,10 @@ def display():
     global flask_output
     return render_template_string('<br>'.join(flask_output))
 
+@app.route('/debug')
+def debug():
+    return "Debug Message"
+
 # Get timestamp for logs
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
 
