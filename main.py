@@ -37,7 +37,7 @@ def send_notification(message):
         'user': pushover_user,
         'message': message,
 	}
-	flask_print("Log: " + message, end='')
+	flask_print("Log: " + message)
 	req = requests.post(pushover_url, data=payload)
 	if (req.status_code == 200):
 		flask_print(f"{current_time()} Log: Notification sent")
