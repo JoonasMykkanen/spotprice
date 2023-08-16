@@ -16,7 +16,6 @@ def flask_print(msg):
     global flask_output
     flask_output.append(msg)
     print(msg)
-    display()
 
 # Function to display flask logs
 @app.route('/')
@@ -38,12 +37,12 @@ def send_notification(message):
         'user': pushover_user,
         'message': message,
 	}
-	flask_print("Log: " + message)
+	flask_print(f"{current_time()}    " + message)
 	req = requests.post(pushover_url, data=payload)
 	if (req.status_code == 200):
-		flask_print(f"{current_time()} Log: Notification sent")
+		flask_print(f"{current_time()}    Notification sent")
 	else:
-		flask_print(f"{current_time()} Log: Notification failed {req.status_code}")
+		flask_print(f"{current_time()}    Notification failed {req.status_code}")
 
 # Get next hour price for electricity spot pricces
 # RETURN: snt / h
@@ -58,7 +57,7 @@ def price_for_next_hour():
 			end_time = (hour_data['end'] + timedelta(hours=2))
 			if next.hour == start_time.hour:
 				price = round(calculate_actual_price(hour_data['value']), 2)
-				flask_print(f"{current_time()} Log: {start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}: {price}snt/kWh")
+				flask_print(f"{current_time()}    {start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}: {price}snt/kWh")
 
 				return price
 
@@ -68,7 +67,7 @@ def get_btc_price():
 	response = requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')
 	data = response.json()
 	price = round(data['bpi']['EUR']['rate_float'], 2)
-	flask_print(f"{current_time()} Log: btc price: {price}€/btc")
+	flask_print(f"{current_time()}    btc price: {price}€/btc")
 	
 	return price
 
@@ -86,7 +85,7 @@ def get_profitability():
 	
     bitcoin_price = round(get_btc_price(), 2)
     profitability = round((((sum(last_hour) / len(last_hour)) * bitcoin_price) / 24), 2)
-    flask_print(f"{current_time()} Log: Profitability for next hour {profitability}€/h")
+    flask_print(f"{current_time()}    Profitability for next hour {profitability}€/h")
     
     return profitability
 
@@ -98,12 +97,12 @@ def background_task():
 		income = get_profitability()
 		cost = (price_for_next_hour() / 100)
 		profit = round(income - cost, 2)
-		flask_print(f"{current_time()} Log: income:{income}€ - cost:{cost}€ = {profit}€/hour")
+		flask_print(f"{current_time()}    income:{income}€ - cost:{cost}€ = {profit}€/hour")
 		if (profit < max_price):
 			send_notification(f"Price check: \U0000274C")
 		else:
 			send_notification(f"Price check: \U00002705")
-		clock.sleep(60)
+		# clock.sleep(61)
    
 # start app
 def main():
@@ -117,7 +116,7 @@ flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
 # TODO: change end_of_hour back to 50
-end_of_hour = 20					# minutes
+end_of_hour = 10					# minutes
 max_price = 0.1						# eur / kWh
 
 # getting env variables
@@ -132,5 +131,9 @@ pushover_user = os.getenv("PUSHOVER_USER")
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
 
-# running app
-main()
+# running app based on if it's local developement or production
+if __name__ == '__main__':
+	main()
+	app.run(host='127.0.0.1', port=8080, threaded=True, debug=False)
+else:
+    main()
