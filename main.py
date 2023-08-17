@@ -28,10 +28,6 @@ def display():
 	# return render_template_string('<br>'.join(logs))
 	return render_template_string(content)
 
-@app.route('/debug')
-def debug():
-    return "Debug Message"
-
 # Get timestamp for logs
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
 
@@ -47,11 +43,13 @@ def send_notification(message):
         'message': message,
 	}
 	flask_print(f"{current_time()}    " + message)
-	req = requests.post(pushover_url, data=payload)
-	if (req.status_code == 200):
+	try:
+		req = requests.post(pushover_url, data=payload)
+		req.raise_for_status()
 		flask_print(f"{current_time()}    Notification sent")
-	else:
-		flask_print(f"{current_time()}    Notification failed {req.status_code}")
+	except requests.RequestException as err:
+		error_msg = err.response.text if err.response else str(err)
+		flask_print(f"{current_time()}    Notification failed {req.status_code}: {error_msg}")
 
 # Get next hour price for electricity spot pricces
 # RETURN: snt / h
