@@ -3,6 +3,6 @@ requests
 nicehash
 gunicorn
 nordpool
-openssl
 flask
 pytz
+ssl=1.1.1
