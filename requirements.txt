@@ -5,4 +5,4 @@ gunicorn
 nordpool
 flask
 pytz
-ssl==1.1.1
+ssl
