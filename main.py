@@ -144,7 +144,7 @@ log = logging.FileHandler('app.log')
 log.setLevel(logging.DEBUG)
 log.setFormatter(format)
 logger.addHandler(log)
-logger.setLevel(logging.WARNING)
+logger.setLevel(logging.DEBUG)
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
