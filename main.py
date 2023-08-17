@@ -16,13 +16,13 @@ app = Flask(__name__)
 # Custom print function to also store logs in flask
 def flask_print(msg):
     log_queue.put(msg)
-    app.logger.debug('put que ok')
+    app.logger.INFO('put que ok')
     print(msg)
 
 # Function to display flask logs
 @app.route('/')
 def display():
-    app.logger.debug('Display called')
+    app.logger.INFO('Display called')
     logs = []
     while not log_queue.empty():
         logs.append(log_queue.get())
@@ -140,7 +140,7 @@ pushover_user = os.getenv("PUSHOVER_USER")
 # init
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 log_queue = Queue()
 
 # running app based on if it's local developement or production
