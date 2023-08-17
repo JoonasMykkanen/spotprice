@@ -2,7 +2,6 @@ from flask import Flask, render_template_string
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 from nordpool import elspot
-from queue import Queue
 import time as clock
 import threading
 import requests
@@ -15,21 +14,19 @@ app = Flask(__name__)
 
 # Custom print function to also store logs in flask
 def flask_print(msg):
-    app.logger.info('added log to queue: ' + msg)
-    log_queue.put(msg)
+    logger.critical(msg)
     print(msg)
 
 # Function to display flask logs
 @app.route('/')
 def display():
-    app.logger.info('Display called')
-    logs = []
-    while not log_queue.empty():
-        logs.append(log_queue.get())
-    if not logs:
-        app.logger.info(logs)
-        return "No logs to display"
-    return render_template_string('<br>'.join(logs))
+	with open('app.log', 'r') as log_file:
+		logs = log_file.read()
+		content = logs.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+	if not logs:
+		return "No logs to display"
+	# return render_template_string('<br>'.join(logs))
+	return render_template_string(content)
 
 @app.route('/debug')
 def debug():
@@ -110,7 +107,7 @@ def background_task():
 		cost = (price_for_next_hour() / 100)
 		profit = round(income - cost, 2)
 		flask_print(f"{current_time()}    income:{income}€ - cost:{cost}€ = {profit}€/hour")
-		if (profit < max_price):
+		if (profit < 0.1):
 			send_notification(f"Price check: \U0000274C")
 		else:
 			send_notification(f"Price check: \U00002705")
@@ -141,12 +138,18 @@ pushover_user = os.getenv("PUSHOVER_USER")
 # init
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
-logging.basicConfig(level=logging.INFO)
-log_queue = Queue()
+format = logging.Formatter('%(message)s')
+logger = logging.getLogger('Logger')
+log = logging.FileHandler('app.log')
+log.setLevel(logging.DEBUG)
+log.setFormatter(format)
+logger.addHandler(log)
+logger.setLevel(logging.WARNING)
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
+	print("Running locally...")
 	main()
-	app.run(host='127.0.0.1', port=8080, debug=False)
+	app.run(host='127.0.0.1', port=8080, debug=False, threaded=True)
 else:
     main()
