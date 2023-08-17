@@ -96,15 +96,28 @@ def get_profitability():
     
     return profitability
 
+# work around for Render.com throttle for inactivity
+def background_worker():
+    while True:
+        try:
+            req = requests.get(render_url)
+            req.raise_for_status()
+            print("background_worker: keep alive request \U0000274C") 
+            logger.info("background_worker: keep alive request \U0000274C")
+        except requests.RequestException as err:
+            print(f"background_worker: keep alive request \U00002705: {err}")
+            logger.info(f"background_worker: request failed \U00002705: {err}")
+        clock.sleep(300)
+
 # mainloop
-def background_task():
+def main():
 	running = True
 	send_notification("Starting script")
 	while running == True:
 		income = get_profitability()
-		cost = (price_for_next_hour() / 100)
+		cost = round((price_for_next_hour() / 100), 2)
 		profit = round(income - cost, 2)
-		flask_print(f"{current_time()}    income:{income}€ - cost:{cost}€ = {profit}€/hour")
+		flask_print(f"{current_time()}    income: {income}€ - cost: {cost}€ = {profit}€/hour")
 		if (profit < 0.1):
 			send_notification(f"Price check: \U0000274C")
 		else:
@@ -112,14 +125,16 @@ def background_task():
 		clock.sleep(61)
    
 # start app in it's own thread
-def main():
-	thread = threading.Thread(target=background_task)
-	thread.start()
+def start():
+	main_thread = threading.Thread(target=main)
+	background_thread = threading.Thread(target=background_worker)
+	main_thread.start()
+	background_thread.start()
 
 # Define constants
 pushover_url = 'https://api.pushover.net/1/messages.json'
+render_url = 'https://spotprice.onrender.com'
 nicehas_url = 'https://api2.nicehash.com'
-flask_output = []
 finland = ['FI']
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
 end_of_hour = 50					# minutes
@@ -147,7 +162,7 @@ logger.setLevel(logging.DEBUG)
 # running app based on if it's local developement or production
 if __name__ == '__main__':
 	print("Running locally...")
-	main()
+	start()
 	app.run(host='127.0.0.1', port=8080, debug=False, threaded=True)
 else:
-    main()
+    start()
