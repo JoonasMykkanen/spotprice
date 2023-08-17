@@ -102,11 +102,11 @@ def background_worker():
         try:
             req = requests.get(render_url)
             req.raise_for_status()
-            print("background_worker: keep alive request \U0000274C") 
-            logger.info("background_worker: keep alive request \U0000274C")
+            print("background_worker: keep alive request \U00002705") 
+            logger.info("background_worker: keep alive request \U00002705")
         except requests.RequestException as err:
-            print(f"background_worker: keep alive request \U00002705: {err}")
-            logger.info(f"background_worker: request failed \U00002705: {err}")
+            print(f"background_worker: keep alive request \U0000274C: {err}")
+            logger.info(f"background_worker: request failed \U0000274C: {err}")
         clock.sleep(300)
 
 # mainloop
