@@ -16,7 +16,7 @@ app = Flask(__name__)
 # Custom print function to also store logs in flask
 def flask_print(msg):
     log_queue.put(msg)
-    app.logger.info('added log to queue')
+    app.logger.info('added log to queue: ' + msg)
     print(msg)
 
 # Function to display flask logs
