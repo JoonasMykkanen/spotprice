@@ -131,7 +131,6 @@ def save_daily(prices):
     msg = f"{datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D')} - Uptime: {len(prices)} hours, Average Price: {avg_price:.2f} snt/kWh\n"
     with open('daily_stats.txt', 'a') as file:
         file.write(msg)
-    send_notification(msg)
     display_uptime()
 
 # Display uptime statistics
@@ -144,6 +143,14 @@ def display_uptime():
 	if not content:
 		return "No stats to display"
 	return render_template_string(content)
+
+# TODO --> functionality needs to be implemented to work with nedis smart home
+# Function to switch rig status
+# RETURN: None
+def change_rig_status(new_status):
+	global rig_status
+	if (rig_status != new_status):
+		pass
 
 # mainloop
 # RETURN: None
@@ -158,8 +165,10 @@ def main():
 		uptime(profit)
 		if (profit < threshold):	# price check failed
 			send_notification(f"Price check: \U0000274C")
+			change_rig_status(False)
 		else:						# price check succeeded
 			ft_print(f"Price check: \U00002705")
+			change_rig_status(True)
 		clock.sleep(61)
    
 # start app in it's own thread
@@ -174,8 +183,9 @@ def start():
 pushover_url = 'https://api.pushover.net/1/messages.json'
 render_url = 'https://spotprice.onrender.com'
 nicehas_url = 'https://api2.nicehash.com'
-finland = ['FI']
 daily_prices = []
+rig_status = True
+finland = ['FI']
 daily_uptime = 0
 electricity_transfer = 4.69 + 2.79	# transfer + VAT
 end_of_hour = 50					# minutes
