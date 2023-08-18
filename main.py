@@ -260,7 +260,7 @@ def main():
 		profit = income - cost
 		ft_print(f"{current_time()}    income: {round(income, 2)}€ - cost: {round(cost, 2)}€ = {round(profit, 2)}€/hour")
 		uptime(profit)
-		if (profit < threshold):
+		if (cost > 0.14):
 			check_failure()
 		else:
 			check_success()
@@ -287,7 +287,7 @@ daily_prices = []
 finland = ['FI']
 daily_uptime = 0
 electricity_transfer = 6.56			# transfer snt / kWh
-end_of_hour = 45					# minutes
+end_of_hour = 57					# minutes
 threshold = 0.15					# eur / h
 rig_mode = True
 last_hour = []
