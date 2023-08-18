@@ -278,10 +278,8 @@ nicehash_key = os.getenv("NICEHASH_API_KEY")
 nicehash_id = os.getenv("NICEHASH_ID")
 pushover_key = os.getenv("PUSHOVER_API_KEY")
 pushover_user = os.getenv("PUSHOVER_USER")
-garage_1_addr = os.getenv("G1_ADDR")
 garage_1_key = os.getenv("G1_KEY")
 garage_1_id = os.getenv("G1_ID")
-garage_0_addr = os.getenv("G0_ADDR")
 garage_0_key = os.getenv("G0_KEY")
 garage_0_id = os.getenv("G0_ID")
 
@@ -320,8 +318,8 @@ uptime_logger.addHandler(uptime_log)
 uptime_logger.setLevel(logging.DEBUG)
 
 # init smart sockets
-sockets.append(Socket(garage_0_id, garage_0_addr, garage_0_key, 0))
-sockets.append(Socket(garage_1_id, garage_1_addr, garage_1_key, 1))
+sockets.append(Socket(garage_0_id, garage_0_key, 0))
+sockets.append(Socket(garage_1_id, garage_1_key, 1))
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
