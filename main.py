@@ -12,44 +12,42 @@ import pytz
 import os
 
 class Socket:
-	def __init__ (self, device_id, device_key, socket_id):
-		
+	def __init__ (self, api_key, api_secret, device_name, socket_id):
+		self.secret = api_secret
+		self.name = device_name
 		self.id = socket_id
-		self.device = self._connect_device(device_id, device_key)
-		self.mode = self._check_switch()
-
-	def _connect_device(self, id, key):
-		device = tinytuya.OutletDevice(
-     		dev_id = id,
-			address = 'Auto',
-			local_key = key,
-			version = '3.3'
-  		)
+		self.key = api_key
+		self.status = self._init_mode()
+		self.status_update()
+  
+	def _init_mode(self):
 		try:
-			device.turn_off()
-			send_notification(f"Connecting socket_{self.id}: \U00002705")
+			tuya_api.sendcommand(self.name, turn_off)
+			socket_logger.info(f"Created socket_{self.id}")
+			return False
 		except Exception:
-			send_notification(f"Connecting socket_{self.id}: \U0000274C")
+			send_notification(f"Error turning off socket_{self.id}")
 			exit()
-		return device
-
-	# Check current status of devices switch
-	# RETURN: boolean --> switch status
-	def _check_switch(self):
-		try:
-			data = self.device.status()
-			status = data['dps']['1']
-			return status
-		except Exception:
-			send_notification(f"Error while checking socket_{self.id} status")
-			exit()
-
-	# Function to switch socket on or off
-	# RETURN: boolean --> on / off after switching
+   
 	def switch(self):
-		self.device.set_status(not self.mode)
-		self.mode = self._check_switch()
-		return self.mode
+		new_status = not self.status
+		payload = { "commands": [{"code": "switch_1", "value": new_status},{"code": "countdown_1", "value": 0},] }
+		try:
+			tuya_api.sendcommand(self.name, payload)
+			socket_logger.info(f"Switched socket_{self.id} mode to: {new_status}")
+			self.status = new_status
+		except Exception:
+			send_notification(f"Error switching socket_{self.id} mode")
+			exit()
+   
+	def status_update(self):
+		try:
+			res = tuya_api.getstatus(self.name)
+			status = res['result'][0]['value']
+			self.status = status
+		except Exception:
+			send_notification(f"Error checking socket_{self.id} status")
+			exit()
 #	____END_CLASS____
 
 app = Flask(__name__)
@@ -61,9 +59,10 @@ def loop_rig_switches(target):
 	global sockets
 
 	for device in sockets:
-		if (device.mode != target):
+		device.status_update()
+		if (device.status != target):
 			device.switch()
-			send_notification(f"Socket_{device.id} switched to: {device.mode}")
+			send_notification(f"Socket_{device.id} switched to: {device.status}")
 	rig_mode = target
 
 # Custom print function to also store logs in flask
@@ -225,8 +224,6 @@ def check_failure():
 		send_notification(f"Price check: \U0000274C")
 	else:
 		ft_print(f"Price check: \U0000274C")
-	loop_rig_switches(True)
-	clock.sleep(1)
 	loop_rig_switches(False)
 
 # mainloop
@@ -255,6 +252,8 @@ def start():
 	background_thread.start()
 
 # Define constants
+turn_off = { "commands": [{"code": "switch_1", "value": False},{"code": "countdown_1", "value": 0},] }
+turn_on = { "commands": [{"code": "switch_1", "value": True},{"code": "countdown_1", "value": 0},] }
 pushover_url = 'https://api.pushover.net/1/messages.json'
 render_url = 'https://spotprice.onrender.com'
 nicehas_url = 'https://api2.nicehash.com'
@@ -265,7 +264,7 @@ daily_prices = []
 finland = ['FI']
 daily_uptime = 0
 electricity_transfer = 6.56			# transfer snt / kWh
-end_of_hour = 50					# minutes
+end_of_hour = 1					# minutes
 threshold = 0.15					# eur / h
 rig_mode = True
 last_hour = []
@@ -278,14 +277,20 @@ nicehash_key = os.getenv("NICEHASH_API_KEY")
 nicehash_id = os.getenv("NICEHASH_ID")
 pushover_key = os.getenv("PUSHOVER_API_KEY")
 pushover_user = os.getenv("PUSHOVER_USER")
-garage_1_key = os.getenv("G1_KEY")
-garage_1_id = os.getenv("G1_ID")
-garage_0_key = os.getenv("G0_KEY")
-garage_0_id = os.getenv("G0_ID")
+tuya_secret = os.getenv("TUYA_SECRET")
+tuya_key = os.getenv("TUYA_KEY")
+garage_0 = os.getenv("G0_ID")
+garage_1 = os.getenv("G1_ID")
 
 # init apis
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
+tuya_api = tinytuya.Cloud(
+    apiRegion='eu',
+	apiKey=tuya_key,
+	apiSecret=tuya_secret,
+	apiDeviceID=garage_0
+)
 
 # General logging
 log_format = logging.Formatter('%(message)s')
@@ -317,9 +322,8 @@ uptime_log.setFormatter(log_format)
 uptime_logger.addHandler(uptime_log)
 uptime_logger.setLevel(logging.DEBUG)
 
-# init smart sockets
-sockets.append(Socket(garage_0_id, garage_0_key, 0))
-sockets.append(Socket(garage_1_id, garage_1_key, 1))
+sockets.append(Socket(tuya_key, tuya_secret, garage_0, 0))
+sockets.append(Socket(tuya_key, tuya_secret, garage_1, 1))
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':
