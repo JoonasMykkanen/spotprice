@@ -4,25 +4,79 @@ from dotenv import load_dotenv
 from nordpool import elspot
 import time as clock
 import threading
+import tinytuya
 import requests
 import nicehash
 import logging
 import pytz
 import os
 
+class Socket:
+	def __init__ (self, device_id, device_addr, device_key, socket_id):
+		
+		self.id = socket_id
+		self.device = self._connect_device(device_id, device_addr, device_key)
+		self.mode = self._check_switch()
+
+	def _connect_device(self, id, addr, key):
+		device = tinytuya.OutletDevice(
+     		dev_id = id,
+			address = addr,
+			local_key = key,
+			version = '3.3'
+  		)
+		try:
+			device.turn_off()
+			send_notification(f"Connecting socket_{self.id}: \U00002705")
+		except Exception:
+			send_notification(f"Connecting socket_{self.id}: \U0000274C")
+			exit()
+		return device
+
+	# Check current status of devices switch
+	# RETURN: boolean --> switch status
+	def _check_switch(self):
+		try:
+			data = self.device.status()
+			status = data['dps']['1']
+			return status
+		except Exception:
+			send_notification(f"Error while checking socket_{self.id} status")
+			exit()
+
+	# Function to switch socket on or off
+	# RETURN: boolean --> on / off after switching
+	def switch(self):
+		self.device.set_status(not self.mode)
+		self.mode = self._check_switch()
+		return self.mode
+#	____END_CLASS____
+
 app = Flask(__name__)
+
+# Loop trough all switches and turn on or off
+# RETURN: None
+def loop_rig_switches(target):
+	global rig_mode
+	global sockets
+
+	for device in sockets:
+		if (device.mode != target):
+			device.switch()
+			send_notification(f"Socket_{device.id} switched to: {device.mode}")
+	rig_mode = target
 
 # Custom print function to also store logs in flask
 # RETURN: None
 def ft_print(msg):
-    logger.info(msg)
+    price_logger.info(msg)
     print(msg)
 
 # Function to display flask logs
 # RETURN: flask template
 @app.route('/')
 def display():
-	with open('app.log', 'r') as log_file:
+	with open(data_log_path, 'r') as log_file:
 		logs = log_file.read()
 		content = logs.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
 	if not logs:
@@ -33,7 +87,7 @@ def display():
 # RETURN: datetime obj
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
 
-# Convert eur / MWh to snt / KWh and also add VAT 24%
+# Convert eur / MWh to snt / KWh and also add VAT 24% also add transfer costs
 # RETURN: snt / kwh
 def calculate_actual_price(price): return ((price / 10) * 1.24) + electricity_transfer
 
@@ -84,20 +138,26 @@ def get_btc_price():
 # Calculate last hours profitability to decide wheter next hour is worth it
 # RETURN: snt / h
 def get_profitability():
-    last_hour = []
-    start = datetime.now(pytz.timezone('Europe/Helsinki'))
+	global	rig_mode
+	global last_hour
     
-    while start.minute != end_of_hour:
-        start = datetime.now(pytz.timezone('Europe/Helsinki'))
-        miner = nicehash_api.get_rigs()
-        last_hour.append(miner['totalProfitability'])
-        clock.sleep(60)
+	start = datetime.now(pytz.timezone('Europe/Helsinki'))
+	while start.minute != end_of_hour:
+		start = datetime.now(pytz.timezone('Europe/Helsinki'))
+		miner = nicehash_api.get_rigs()
+		if (rig_mode == True):
+			last_hour.append(miner['totalProfitability'])
+		clock.sleep(60)
 	
-    bitcoin_price = get_btc_price()
-    profitability = (((sum(last_hour) / len(last_hour)) * bitcoin_price) / 24)
-    ft_print(f"{current_time()}    Profitability for next hour {round(profitability, 2)}€/h")
-    
-    return profitability
+	bitcoin_price = get_btc_price()
+	if (len(last_hour) > 0):
+		profitability = (((sum(last_hour) / len(last_hour)) * bitcoin_price) / 24)
+	else:
+		profitability = 0
+	ft_print(f"{current_time()}    Profitability for next hour {round(profitability, 2)}€/h")
+	if (rig_mode == True):
+		last_hour = []
+	return profitability
 
 # work around for Render.com throttle for inactivity
 # RETURN: None
@@ -115,6 +175,7 @@ def background_worker():
 def uptime(profit):
     global daily_prices
     global daily_uptime
+    
     now = datetime.now(pytz.timezone('Europe/Helsinki'))
     if (profit > threshold):
         daily_prices.append(profit)
@@ -129,46 +190,60 @@ def uptime(profit):
 def save_daily(prices):
     avg_price = sum(prices) / len(prices) if prices else 0
     msg = f"{datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D')} - Uptime: {len(prices)} hours, Average Price: {avg_price:.2f} snt/kWh\n"
-    with open('daily_stats.txt', 'a') as file:
-        file.write(msg)
+    uptime_logger.info(msg)
     display_uptime()
 
 # Display uptime statistics
 # RETURN: route template
 @app.route('/uptime')
 def display_uptime():
-	with open('daily_stats.txt', 'r') as file:
-		stats = file.read()
-		content = stats.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-	if not content:
-		return "No stats to display"
-	return render_template_string(content)
+	with app.app_context():
+		with open(uptime_log_path, 'r') as file:
+			stats = file.read()
+			content = stats.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+		if not content:
+			return "No stats to display"
+		return render_template_string(content)
 
-# TODO --> functionality needs to be implemented to work with nedis smart home
-# Function to switch rig status
+# Based on previous rig status, send notification or print log
 # RETURN: None
-def change_rig_status(new_status):
-	global rig_status
-	if (rig_status != new_status):
-		pass
+def check_success():
+	global rig_mode
+
+	if (rig_mode == False):
+		send_notification(f"Price check: \U00002705")
+	else:
+		ft_print(f"Price check: \U00002705")
+	loop_rig_switches(True)
+	
+# Based on previous rig status, send notification or print log
+# RETURN: None
+def check_failure():
+	global rig_mode
+
+	if (rig_mode == True):
+		send_notification(f"Price check: \U0000274C")
+	else:
+		ft_print(f"Price check: \U0000274C")
+	loop_rig_switches(True)
+	clock.sleep(1)
+	loop_rig_switches(False)
 
 # mainloop
 # RETURN: None
 def main():
 	running = True
-	send_notification("Starting script...")
+	send_notification("Starting script")
 	while running == True:
 		income = get_profitability()
 		cost = (price_for_next_hour() / 100)
 		profit = income - cost
 		ft_print(f"{current_time()}    income: {round(income, 2)}€ - cost: {round(cost, 2)}€ = {round(profit, 2)}€/hour")
 		uptime(profit)
-		if (profit < threshold):	# price check failed
-			send_notification(f"Price check: \U0000274C")
-			change_rig_status(False)
-		else:						# price check succeeded
-			ft_print(f"Price check: \U00002705")
-			change_rig_status(True)
+		if (profit < threshold):
+			check_failure()
+		else:
+			check_success()
 		clock.sleep(61)
    
 # start app in it's own thread
@@ -183,14 +258,18 @@ def start():
 pushover_url = 'https://api.pushover.net/1/messages.json'
 render_url = 'https://spotprice.onrender.com'
 nicehas_url = 'https://api2.nicehash.com'
+socket_log_path = 'logs/socket.log'
+uptime_log_path = 'logs/uptime.log'
+data_log_path = 'logs/data.log'
 daily_prices = []
-rig_status = True
 finland = ['FI']
 daily_uptime = 0
-electricity_transfer = 4.69 + 2.79	# transfer + VAT
+electricity_transfer = 6.56			# transfer snt / kWh
 end_of_hour = 50					# minutes
 threshold = 0.15					# eur / h
-
+rig_mode = True
+last_hour = []
+sockets = []
 
 # getting env variables
 load_dotenv()
@@ -199,17 +278,50 @@ nicehash_key = os.getenv("NICEHASH_API_KEY")
 nicehash_id = os.getenv("NICEHASH_ID")
 pushover_key = os.getenv("PUSHOVER_API_KEY")
 pushover_user = os.getenv("PUSHOVER_USER")
+garage_1_addr = os.getenv("G1_ADDR")
+garage_1_key = os.getenv("G1_KEY")
+garage_1_id = os.getenv("G1_ID")
+garage_0_addr = os.getenv("G0_ADDR")
+garage_0_key = os.getenv("G0_KEY")
+garage_0_id = os.getenv("G0_ID")
 
-# init
+# init apis
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
-format = logging.Formatter('%(message)s')
-logger = logging.getLogger('Logger')
-log = logging.FileHandler('app.log')
-log.setLevel(logging.DEBUG)
-log.setFormatter(format)
-logger.addHandler(log)
-logger.setLevel(logging.DEBUG)
+
+# General logging
+log_format = logging.Formatter('%(message)s')
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+# init price logging
+price_logger = logging.getLogger('Price_logger')
+price_log = logging.FileHandler(data_log_path)
+price_log.setLevel(logging.DEBUG)
+price_log.setFormatter(log_format)
+price_logger.addHandler(price_log)
+price_logger.setLevel(logging.DEBUG)
+
+# init socket logging
+socket_logger = logging.getLogger('Socket_logger')
+socket_log = logging.FileHandler(socket_log_path)
+socket_log.setLevel(logging.DEBUG)
+socket_log.setFormatter(log_format)
+socket_logger.addHandler(socket_log)
+socket_logger.setLevel(logging.DEBUG)
+
+# init uptime logging
+uptime_logger = logging.getLogger('Uptime_Logger')
+uptime_log = logging.FileHandler(uptime_log_path)
+uptime_log.setLevel(logging.DEBUG)
+uptime_log.setFormatter(log_format)
+uptime_logger.addHandler(uptime_log)
+uptime_logger.setLevel(logging.DEBUG)
+
+# init smart sockets
+sockets.append(Socket(garage_0_id, garage_0_addr, garage_0_key, 0))
+sockets.append(Socket(garage_1_id, garage_1_addr, garage_1_key, 1))
 
 # running app based on if it's local developement or production
 if __name__ == '__main__':

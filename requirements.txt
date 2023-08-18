@@ -3,5 +3,6 @@ requests
 nicehash
 gunicorn
 nordpool
+tinytuya
 flask
 pytz
