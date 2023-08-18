@@ -63,6 +63,8 @@ def loop_rig_switches(target):
 		if (device.status != target):
 			device.switch()
 			send_notification(f"Socket_{device.id} switched to: {device.status}")
+		else:
+			socket_logger.info("No need to change socket_{device.id} status")
 	rig_mode = target
 
 # Custom print function to also store logs in flask
