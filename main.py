@@ -82,6 +82,18 @@ def display():
 		return "No logs to display"
 	return render_template_string(content)
 
+# function to display 
+# RETURN: flask template
+@app.route('/socket')
+def display_socket_log():
+	with open(socket_log_path, 'r') as log_file:
+		logs = log_file.read()
+		content = logs.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+	if not logs:
+		return "No logs to display"
+	return render_template_string(content)
+  
+
 # Get timestamp for logs
 # RETURN: datetime obj
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
