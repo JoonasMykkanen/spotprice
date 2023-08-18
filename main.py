@@ -216,6 +216,14 @@ def display_uptime():
 			return "No stats to display"
 		return render_template_string(content)
 
+# waits until start of next hour
+# RETURN: None
+def wait_until_start():
+	now = datetime.now(pytz.timezone('Europe/Helsinki'))
+	while (now.minute != 0):
+		now = datetime.now(pytz.timezone('Europe/Helsinki'))
+		clock.sleep(60)
+
 # Based on previous rig status, send notification or print log
 # RETURN: None
 def check_success():
@@ -225,6 +233,7 @@ def check_success():
 		send_notification(f"Price check: \U00002705")
 	else:
 		ft_print(f"Price check: \U00002705")
+	wait_until_start()
 	loop_rig_switches(True)
 	
 # Based on previous rig status, send notification or print log
