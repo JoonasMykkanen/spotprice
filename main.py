@@ -12,16 +12,16 @@ import pytz
 import os
 
 class Socket:
-	def __init__ (self, device_id, device_addr, device_key, socket_id):
+	def __init__ (self, device_id, device_key, socket_id):
 		
 		self.id = socket_id
-		self.device = self._connect_device(device_id, device_addr, device_key)
+		self.device = self._connect_device(device_id, device_key)
 		self.mode = self._check_switch()
 
-	def _connect_device(self, id, addr, key):
+	def _connect_device(self, id, key):
 		device = tinytuya.OutletDevice(
      		dev_id = id,
-			address = addr,
+			address = 'Auto',
 			local_key = key,
 			version = '3.3'
   		)
