@@ -58,6 +58,7 @@ def loop_rig_switches(target):
 	global rig_mode
 	global sockets
 
+	wait_until_start()
 	for device in sockets:
 		device.status_update()
 		if (device.status != target):
@@ -133,6 +134,7 @@ def price_for_next_hour():
 			start_time = (hour_data['start'] + timedelta(hours=2))
 			end_time = (hour_data['end'] + timedelta(hours=2))
 			if next.hour == start_time.hour:
+				ft_print(f"{current_time()}		raw value from nordpool: {hour_data['value']}eur/Mwh or {hour_data['value'] / 10}snt/kwh")
 				price = round(calculate_actual_price(hour_data['value']), 2)
 				ft_print(f"{current_time()}    {start_time.strftime('%H:%M')}-{end_time.strftime('%H:%M')}: {price}snt/kWh")
 
@@ -235,7 +237,6 @@ def check_success():
 		send_notification(f"Price check: \U00002705")
 	else:
 		ft_print(f"Price check: \U00002705")
-	wait_until_start()
 	loop_rig_switches(True)
 	
 # Based on previous rig status, send notification or print log
@@ -287,9 +288,9 @@ daily_prices = []
 finland = ['FI']
 daily_uptime = 0
 electricity_transfer = 6.56			# transfer snt / kWh
-end_of_hour = 57					# minutes
+end_of_hour = 45					# minutes
 threshold = 0.15					# eur / h
-rig_mode = True
+rig_mode = False
 last_hour = []
 sockets = []
 
@@ -306,14 +307,9 @@ garage_0 = os.getenv("G0_ID")
 garage_1 = os.getenv("G1_ID")
 
 # init apis
+tuya_api = tinytuya.Cloud(apiRegion='eu', apiKey=tuya_key, apiSecret=tuya_secret, apiDeviceID=garage_0)
 nicehash_api = nicehash.private_api(nicehas_url, nicehash_id, nicehash_key, nicehash_secret)
 nordpool_api = elspot.Prices(currency='EUR')
-tuya_api = tinytuya.Cloud(
-    apiRegion='eu',
-	apiKey=tuya_key,
-	apiSecret=tuya_secret,
-	apiDeviceID=garage_0
-)
 
 # General logging
 log_format = logging.Formatter('%(message)s')
