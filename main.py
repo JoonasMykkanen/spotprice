@@ -261,7 +261,7 @@ def main():
 		profit = income - cost
 		ft_print(f"{current_time()}    income: {round(income, 2)}€ - cost: {round(cost, 2)}€ = {round(profit, 2)}€/hour")
 		uptime(profit)
-		if (cost > ):
+		if (cost > threshold):
 			check_failure()
 		else:
 			check_success()
