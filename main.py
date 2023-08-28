@@ -249,15 +249,6 @@ def check_failure():
 	else:
 		ft_print(f"Price check: \U0000274C")
 	loop_rig_switches(False)
- 
-# Function to dynamically set threshold
-# RETURN: snt / Kwh
-def set_threshold(profit, income):
-	if income == 0:
-		return 0.12
-	else:
-		return profit
-		
 
 # mainloop
 # RETURN: None
@@ -270,8 +261,7 @@ def main():
 		profit = income - cost
 		ft_print(f"{current_time()}    income: {round(income, 2)}€ - cost: {round(cost, 2)}€ = {round(profit, 2)}€/hour")
 		uptime(profit)
-		threshold = set_threshold(profit, income)
-		if (cost > threshold):
+		if (cost > ):
 			check_failure()
 		else:
 			check_success()
@@ -299,7 +289,7 @@ finland = ['FI']
 daily_uptime = 0
 electricity_transfer = 6.56			# transfer snt / kWh
 end_of_hour = 45					# minutes
-threshold  = 0.12		# eur / h
+threshold  = 0.14		# eur / h
 rig_mode = False
 last_hour = []
 sockets = []
