@@ -1,2 +1,9 @@
 # spotprice
-Nordpool spot price tracker script, sends notifications based on price.
+
+### Problem: need to automate server based on electricity price
+
+### Solution: Python script
+
+### Features:
+  - Sends a notification to phone when something happen
+  - Automaticly switches on / off my server using wifi sockets
