@@ -85,18 +85,6 @@ def display():
 		return "No logs to display"
 	return render_template_string(content)
 
-# function to display 
-# RETURN: flask template
-@app.route('/socket')
-def display_socket_log():
-	with open(socket_log_path, 'r') as log_file:
-		logs = log_file.read()
-		content = logs.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-	if not logs:
-		return "No logs to display"
-	return render_template_string(content)
-  
-
 # Get timestamp for logs
 # RETURN: datetime obj
 def current_time(): return datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D %H:%M:%S')
@@ -140,86 +128,6 @@ def price_for_next_hour():
 
 				return price
 
-# Retrives current btc price
-# RETURN: eur / btc
-def get_btc_price():
-	response = requests.get('https://api.coindesk.com/v1/bpi/currentprice.json')
-	data = response.json()
-	price = round(data['bpi']['EUR']['rate_float'], 2)
-	ft_print(f"{current_time()}    btc price: {price}€/btc")
-	
-	return price
-
-# Calculate last hours profitability to decide wheter next hour is worth it
-# RETURN: snt / h
-def get_profitability():
-	global	rig_mode
-	global last_hour
-    
-	start = datetime.now(pytz.timezone('Europe/Helsinki'))
-	while start.minute != end_of_hour:
-		start = datetime.now(pytz.timezone('Europe/Helsinki'))
-		miner = nicehash_api.get_rigs()
-		if (rig_mode == True):
-			last_hour.append(miner['totalProfitability'])
-		clock.sleep(60)
-	
-	bitcoin_price = get_btc_price()
-	if (len(last_hour) > 0):
-		profitability = (((sum(last_hour) / len(last_hour)) * bitcoin_price) / 24)
-	else:
-		profitability = 0
-	ft_print(f"{current_time()}    Profitability for next hour {round(profitability, 2)}€/h")
-	if (rig_mode == True):
-		last_hour = []
-	return profitability
-
-# work around for Render.com throttle for inactivity
-# RETURN: None
-def background_worker():
-    while True:
-        try:
-            req = requests.get(render_url)
-            req.raise_for_status()
-        except requests.RequestException as err:
-            send_notification(f"bg: keep alive request \U0000274C: {err}")
-        clock.sleep(300)
-        
-# keep track of uptime and price
-# RETURN: None
-def uptime(profit):
-    global daily_prices
-    global daily_uptime
-    
-    now = datetime.now(pytz.timezone('Europe/Helsinki'))
-    if (profit > threshold):
-        daily_prices.append(profit)
-        daily_uptime += 1
-    if (now.hour == 0):
-        save_daily(daily_prices)
-        daily_uptime = 0
-        daily_prices = []
-
-# save daily statistics and display them on route 
-# RETURN: None
-def save_daily(prices):
-    avg_price = sum(prices) / len(prices) if prices else 0
-    msg = f"{datetime.now(pytz.timezone('Europe/Helsinki')).strftime('%D')} - Uptime: {len(prices)} hours, Average Price: {avg_price:.2f} snt/kWh\n"
-    uptime_logger.info(msg)
-    display_uptime()
-
-# Display uptime statistics
-# RETURN: route template
-@app.route('/uptime')
-def display_uptime():
-	with app.app_context():
-		with open(uptime_log_path, 'r') as file:
-			stats = file.read()
-			content = stats.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-		if not content:
-			return "No stats to display"
-		return render_template_string(content)
-
 # waits until start of next hour
 # RETURN: None
 def wait_until_start():
@@ -256,11 +164,7 @@ def main():
 	running = True
 	send_notification("Starting script")
 	while running == True:
-		income = get_profitability()
 		cost = (price_for_next_hour() / 100)
-		profit = income - cost
-		ft_print(f"{current_time()}    income: {round(income, 2)}€ - cost: {round(cost, 2)}€ = {round(profit, 2)}€/hour")
-		uptime(profit)
 		if (cost > threshold):
 			check_failure()
 		else:
@@ -281,17 +185,12 @@ turn_on = { "commands": [{"code": "switch_1", "value": True},{"code": "countdown
 pushover_url = 'https://api.pushover.net/1/messages.json'
 render_url = 'https://spotprice.onrender.com'
 nicehas_url = 'https://api2.nicehash.com'
-socket_log_path = 'logs/socket.log'
-uptime_log_path = 'logs/uptime.log'
 data_log_path = 'logs/data.log'
-daily_prices = []
 finland = ['FI']
-daily_uptime = 0
 electricity_transfer = 6.56			# transfer snt / kWh
 end_of_hour = 45					# minutes
-threshold  = 0.14		# eur / h
+threshold  = 0.115					# eur / h
 rig_mode = False
-last_hour = []
 sockets = []
 
 # getting env variables
@@ -316,30 +215,6 @@ log_format = logging.Formatter('%(message)s')
 log_dir = "logs"
 if not os.path.exists(log_dir):
     os.makedirs(log_dir)
-
-# init price logging
-price_logger = logging.getLogger('Price_logger')
-price_log = logging.FileHandler(data_log_path)
-price_log.setLevel(logging.DEBUG)
-price_log.setFormatter(log_format)
-price_logger.addHandler(price_log)
-price_logger.setLevel(logging.DEBUG)
-
-# init socket logging
-socket_logger = logging.getLogger('Socket_logger')
-socket_log = logging.FileHandler(socket_log_path)
-socket_log.setLevel(logging.DEBUG)
-socket_log.setFormatter(log_format)
-socket_logger.addHandler(socket_log)
-socket_logger.setLevel(logging.DEBUG)
-
-# init uptime logging
-uptime_logger = logging.getLogger('Uptime_Logger')
-uptime_log = logging.FileHandler(uptime_log_path)
-uptime_log.setLevel(logging.DEBUG)
-uptime_log.setFormatter(log_format)
-uptime_logger.addHandler(uptime_log)
-uptime_logger.setLevel(logging.DEBUG)
 
 sockets.append(Socket(tuya_key, tuya_secret, garage_0, 0))
 sockets.append(Socket(tuya_key, tuya_secret, garage_1, 1))
