@@ -1,35 +1,41 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    nicehashService.py                                 :+:      :+:    :+:    #
+#    pushoverService.py                                 :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/12/19 09:14:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:30:18 by jmykkane         ###   ########.fr        #
+#    Created: 2023/12/19 12:13:49 by jmykkane          #+#    #+#              #
+#    Updated: 2023/12/19 12:23:31 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-from ..utils.nicehash import private_api
 from flask import current_app
+import requests
 
-class nicehashAPI:
+url = 'https://api.pushover.net/1/messages.json'
+
+class pushoverAPI:
 	def __init__(self):
-		self.api = None
-	
-	def setup(self):
-		secret = current_app.config['NICEHASH_SECRET']
-		key = current_app.config['NICEHASH_KEY']
-		id = current_app.config['NICEHASH_ID']
-		url = 'https://api2.nicehash.com'
-		self.api = private_api(url, id, key, secret)
-		self.testConnection()
+		self.payload = None
+		self.user = None
+		self.key = None
+		self.url = url
 
-	# instantly test connection during init
-	def testConnection(self):
-		try:
-			my_accounts = self.api.get_accounts()
-			print(f'Nicehash api connected succesfully')
-		except Exception as e:
-			print(f'NicehashAPI: testConnection: {e}')
+	def setup(self):
+		self.key = current_app.config['PUSHOVER_KEY']
+		self.user = current_app.config['PUSHOVER_USER']
+		self.testConnection()
 	
+	def testConnection(self):
+		payload = {
+			'token': self.key,
+			'user': self.user,
+			'message': 'Connection test'
+		}
+		try:
+			response = requests.post(url, data=payload)
+			response.raise_for_status()
+			print('Pushover connected succesfully')
+		except Exception as e:
+			print(f'pushoverAPI: testConnection: {e}')

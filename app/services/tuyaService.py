@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:53:45 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:06:33 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/19 12:13:34 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,7 +24,12 @@ class tuyaAPI:
 	def setup(self):
 		secret = current_app.config['TUYA_SECRET']
 		key = current_app.config['TUYA_KEY']
-		self.api = tinytuya.Cloud(apiRegion='eu', apiKey=key, apiSecret=secret, apiDeviceID=current_app.config['R0S0_ID'])
+		self.api = tinytuya.Cloud(\
+			apiRegion='eu', \
+			apiKey=key, \
+			apiSecret=secret, \
+			apiDeviceID=current_app.config['R0S0_ID'] \
+		)
 
 		# Creating Rig objects from sockets
 		for index in range(0, rig_count):

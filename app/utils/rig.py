@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 11:09:25 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:09:42 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/19 12:26:07 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -29,10 +29,10 @@ class Rig:
 			status0 = res0['result'][0]['value']
 			res1 = self.api.getstatus(self.socket1)
 			status1 = res1['result'][0]['value']
-			if status0 == True and status1 == True:
+			if status0 is True and status1 is True:
 				self.status = True
 			else:
 				self.status = False
-			print(f'Rig{self.index}: connected')
+			print(f'Rig{self.index}: connected & status: {self.status}')
 		except Exception as e:
 			print(f'Rig: testConnection: {e}')

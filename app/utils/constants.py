@@ -1,7 +1,14 @@
-
-# API urls
-pushover_url = 'https://api.pushover.net/1/messages.json'
-render_url = 'https://spotprice.onrender.com'
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    constants.py                                       :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2023/12/19 12:20:58 by jmykkane          #+#    #+#              #
+#    Updated: 2023/12/19 12:21:00 by jmykkane         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
 # Constants
 finland = ['FI']				# use area
