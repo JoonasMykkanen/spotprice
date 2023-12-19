@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 09:19:59 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 11:01:16 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/19 12:38:45 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,3 +37,6 @@ class Config:
 	R0S1_ID = os.environ.get('R0S1_ID')		# RIG 0 SOCKET 1
 	R0S1_ADDR = os.environ.get('R0S0_ADDR')	# RIG 0 SOCKET 1
 	R0S1_KEY = os.environ.get('R0S0_KEY')	# RIG 0 SOCKET 1
+
+	# antminer header
+	ANTMINER_AUTH = os.environ.get('ANTMINER_AUTH')

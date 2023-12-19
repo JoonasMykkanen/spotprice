@@ -1,40 +1,34 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    pushoverService.py                                 :+:      :+:    :+:    #
+#    antminerService.py                                 :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2023/12/19 12:13:49 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:32:55 by jmykkane         ###   ########.fr        #
+#    Created: 2023/12/19 12:31:22 by jmykkane          #+#    #+#              #
+#    Updated: 2023/12/19 12:51:44 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from flask import current_app
 import requests
 
-url = 'https://api.pushover.net/1/messages.json'
+url = 'http://louhos.ddns.net:1111'
 
-class pushoverAPI:
+class antminerAPI:
 	def __init__(self):
-		self.payload = None
-		self.user = None
-		self.key = None
+		self.headers = None
 
 	def setup(self):
-		self.key = current_app.config['PUSHOVER_KEY']
-		self.user = current_app.config['PUSHOVER_USER']
+		self.headers = {
+			'Authorization': current_app.config['ANTMINER_AUTH']
+		}
 		self.testConnection()
 	
 	def testConnection(self):
-		payload = {
-			'token': self.key,
-			'user': self.user,
-			'message': 'Connection test'
-		}
 		try:
-			response = requests.post(url, data=payload)
+			response = requests.get(url, headers=self.headers)
 			response.raise_for_status()
-			print('Pushover connected succesfully')
+			print('Antminer dashboard connected succesfully')
 		except Exception as e:
-			print(f'pushoverAPI: testConnection: {e}')
+			print(f'antminerAPI: testConnection: {e}')

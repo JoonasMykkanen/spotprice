@@ -6,12 +6,14 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 09:14:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:30:18 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/19 12:33:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 from ..utils.nicehash import private_api
 from flask import current_app
+
+url = 'https://api2.nicehash.com'
 
 class nicehashAPI:
 	def __init__(self):
@@ -21,7 +23,6 @@ class nicehashAPI:
 		secret = current_app.config['NICEHASH_SECRET']
 		key = current_app.config['NICEHASH_KEY']
 		id = current_app.config['NICEHASH_ID']
-		url = 'https://api2.nicehash.com'
 		self.api = private_api(url, id, key, secret)
 		self.testConnection()
 
