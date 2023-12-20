@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/17 17:30:32 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 10:37:47 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/19 16:46:21 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,10 @@ from flask_cors import CORS
 from config import Config
 from flask import Flask
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from .utils.initExternalApi import initExternalAPI
+from .tasks import updateDatabases
+from .db import db
 
 def create_app():
 	# Create flask application
@@ -24,6 +27,14 @@ def create_app():
 	# Get configuration --> .env variables & external api's
 	app.config.from_object(Config)
 	initExternalAPI(app)
+
+	# init database
+	# db.init(app)
+
+	# Creating scheduler for automated data retrieving from api's
+	scheduler = BackgroundScheduler()
+	scheduler.add_job(lambda: updateDatabases(app), 'interval', seconds=5)
+	scheduler.start()
 
 	# Use cors to make react frontend able to connect
 	CORS(app)

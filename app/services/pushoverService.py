@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:13:49 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/19 12:32:55 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/20 08:46:41 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ url = 'https://api.pushover.net/1/messages.json'
 class pushoverAPI:
 	def __init__(self):
 		self.payload = None
+		self.error = False
 		self.user = None
 		self.key = None
 
@@ -25,6 +26,7 @@ class pushoverAPI:
 		self.key = current_app.config['PUSHOVER_KEY']
 		self.user = current_app.config['PUSHOVER_USER']
 		self.testConnection()
+		return self
 	
 	def testConnection(self):
 		payload = {
@@ -38,3 +40,4 @@ class pushoverAPI:
 			print('Pushover connected succesfully')
 		except Exception as e:
 			print(f'pushoverAPI: testConnection: {e}')
+			self.error = True
