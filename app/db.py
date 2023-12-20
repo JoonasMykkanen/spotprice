@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 14:10:39 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/20 12:22:02 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/20 14:43:47 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -46,9 +46,36 @@ class RigStatus(BaseModel):
 class ElectricityPrice(BaseModel):
 	price = FloatField()
 
+# Frequency: 60min
+# Content: Integer 
+# Example: MH/S average over 60 minute period
+class HashRate(BaseModel):
+	mhs = IntegerField()
+
+# Frequency: 60min
+# Content: Float [eur / hour]
+# Example: Income - cost
+class Profit(BaseModel):
+	amount = FloatField()
+
+# Frequency: 60min
+# Content: Float [eur / hour]
+# Example: usage[kWh] * price[snt] converted to eur / hour
+class Cost(BaseModel):
+	amount = FloatField()
+
+# Frequency: 60min
+# Content: interger
+# Example: [EUR / BTC]
+class priceBTC(BaseModel):
+	value = IntegerField()
+
 db.connect()
 db.create_tables([
 	ElectricityPrice,
 	PowerConsumption,
-	RigStatus
+	RigStatus,
+	priceBTC,
+	HashRate,
+	Cost
 ])

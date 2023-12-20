@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:29:43 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/20 11:53:04 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/20 15:35:56 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,8 +27,9 @@ def initExternalAPI(app):
 	with app.app_context():
 		# app.config['nicehashAPI'] = nicehashAPI().setup()
 		# app.config['pushoverAPI'] = pushoverAPI().setup()
-		# app.config['antminerAPI'] = antminerAPI().setup()
+		app.config['antminerAPI'] = antminerAPI().setup()
+		app.config['antminerAPI'].getFanRPM()
+		# app.config['antminerAPI'].getMinerStats()
 		# app.config['nordpoolAPI'] = nordpoolAPI().setup()
-		app.config['tuyaAPI'] = tuyaAPI().setup()
-		app.config['tuyaAPI'].getStatus()
-		app.config['tuyaAPI'].getPower()
+		# app.config['tuyaAPI'] = tuyaAPI().setup()
+		pass # TODO: Remove when debugging done
