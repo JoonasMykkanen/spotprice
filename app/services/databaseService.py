@@ -6,13 +6,14 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/21 11:03:02 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:12:51 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 16:14:23 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Contains push and get functions for each table in database
 
 from pprint import pprint
+from flask import jsonify
 from ..db import *
 
 # TABLE: bitcoin price getter and setter
@@ -25,13 +26,16 @@ def pushBtcPrice(data):
 			print(f'Database: pushBtcPrice: {e}')
 
 def getBtcPrice():
-	with db.atomic():
-		try:
-			response = priceBTC.select()
-			for entry in response:
-				print(entry.value)
-		except Exception as e:
-			print(f'Database: getBtcPrice: {e}')
+    with db.atomic():
+        try:
+            response = {}
+            data = priceBTC.select()
+            for entry in data:
+                response[entry.timestamp] = {'price': entry.value}
+            return jsonify(response)
+        except Exception as e:
+            print(f'Database: getBtcPrice: {e}')
+            return jsonify({'error': str(e)})
 
 
 # TABLE: Electricity price data price getter and setter
@@ -46,11 +50,14 @@ def pushElectricityPrice(data):
 def getElectricityPrice():
     with db.atomic():
         try:
-            response = ElectricityPrice.select()
-            for entry in response:
-                print(entry.value)
+            response = {}
+            data = ElectricityPrice.select()
+            for entry in data:
+                response[entry.timestamp] = {'price': entry.value}
+            return jsonify(response)
         except Exception as e:
             print(f'Database: getElectricityPrice: {e}')
+            return jsonify({'error': str(e)})
 
 
 
@@ -66,11 +73,14 @@ def pushPowerConsumption(data):
 def getPowerConsumption():
     with db.atomic():
         try:
-            response = PowerConsumption.select()
-            for entry in response:
-                print(entry.value)
+            response = {}
+            data = PowerConsumption.select()
+            for entry in data:
+                    response[entry.timestamp] = {'price': entry.value}
+            return jsonify(response)
         except Exception as e:
             print(f'Database: getPowerConsumption: {e}')
+            return jsonify({'error': str(e)})
 
 
 
@@ -86,11 +96,14 @@ def pushHashRate(data):
 def getHashRate():
     with db.atomic():
         try:
-            response = HashRate.select()
-            for entry in response:
-                print(entry.value)
+            response = {}
+            data = HashRate.select()
+            for entry in data:
+                response[entry.timestamp] = {'price': entry.value}
+            return jsonify(response)
         except Exception as e:
             print(f'Database: getHashRate: {e}')
+            return jsonify({'error': str(e)})
 
 
 
@@ -106,8 +119,11 @@ def pushCost(data):
 def getCost():
     with db.atomic():
         try:
-            response = Cost.select()
-            for entry in response:
-                print(entry.value)
+            response = {}
+            data = Cost.select()
+            for entry in data:
+                response[entry.timestamp] = {'price': entry.value}
+            return jsonify(response)
         except Exception as e:
             print(f'Database: getCost: {e}')
+            return jsonify({'error': str(e)})

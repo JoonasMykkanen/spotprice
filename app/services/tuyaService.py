@@ -6,10 +6,11 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:53:45 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 15:24:00 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+from .databaseService import pushPowerConsumption
 from flask import current_app
 from .rigService import Rig
 import tinytuya
@@ -67,7 +68,7 @@ class tuyaAPI:
 		except Exception as e:
 			print(f'TuyaAPI: getPower: {e}')
 			self.error = True
-			return {}
+			return "{}"
 
 	# Returns json object containing rig index and their status with [true / false]
 	def getStatus(self):
@@ -84,3 +85,9 @@ class tuyaAPI:
 	
 	def testRun(self):
 		print(f'test from: {self.__class__.__name__}')
+
+	# Will fetch all hourly data points for this api and push them to database
+	def pollNewHourlyData(self):
+		data = self.getPower()
+		pushPowerConsumption(data)
+		print(f'{self.__class__.__name__} posted {data} into DB')

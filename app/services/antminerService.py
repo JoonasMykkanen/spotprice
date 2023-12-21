@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:31:22 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 15:24:57 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@
 # way to host them in the same endpoint with different paths that can
 # be accessed based on rig index or something similar.
 
+from .databaseService import pushHashRate
 from flask import current_app
 from pprint import pprint
 import requests
@@ -39,7 +40,8 @@ class antminerAPI:
 	
 	def testConnection(self):
 		try:
-			response = requests.get(baseUrl, headers=self.headers)
+			url = baseUrl + statsUrl
+			response = requests.get(url, headers=self.headers)
 			response.raise_for_status()
 			print('Antminer dashboard connected succesfully')
 		except Exception as e:
@@ -63,7 +65,6 @@ class antminerAPI:
 		try:
 			self.getMinerStats()
 			data = self.stats['STATS'][0]['rate_30m']
-			print(f'hashrate: {data} MH/S')
 			return data
 		except Exception as e:
 			print(f'antminerAPI: getHashRate: {e}')
@@ -76,7 +77,6 @@ class antminerAPI:
 		try:
 			self.getMinerStats()
 			data = self.stats['STATS'][0]['fan']
-			pprint(max(data))
 			return max(data)
 		except Exception as e:
 			print(f'antminerAPI: getFanRPM: {e}')
@@ -86,3 +86,9 @@ class antminerAPI:
 	# TODO: getters for Temp, Rejection rate, pool status
 	def testRun(self):
 		print(f'test from: {self.__class__.__name__}')
+
+	# Will fetch all hourly data points for this api and push them to database
+	def pollNewHourlyData(self):
+		data = self.getHashRate()
+		pushHashRate(data)
+		print(f'{self.__class__.__name__} posted {data} into DB')

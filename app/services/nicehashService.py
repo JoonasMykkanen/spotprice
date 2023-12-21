@@ -6,14 +6,12 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 09:14:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:49:13 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+from .databaseService import pushBtcPrice
 from ..utils.nicehash import private_api
-from datetime import timedelta
-from datetime import datetime
-from datetime import timezone
 from flask import current_app
 import requests
 
@@ -57,3 +55,9 @@ class nicehashAPI:
 
 	def testRun(self):
 		print(f'test from: {self.__class__.__name__}')
+
+	# Will fetch all hourly data points for this api and push them to database
+	def pollNewHourlyData(self):
+		data = self.getBtcPrice()
+		pushBtcPrice(data)
+		print(f'{self.__class__.__name__} posted {data} into DB')

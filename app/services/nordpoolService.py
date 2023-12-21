@@ -6,10 +6,11 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 15:03:14 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:55:15 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
+from .databaseService import pushElectricityPrice
 from datetime import timedelta
 from datetime import datetime
 from nordpool import elspot
@@ -21,7 +22,7 @@ FINLAND = ['FI']
 
 # Helper function to return actual cost of electricity [eur / kWh]
 def calcRealPrice(price):
-	return ((price / 10) * 1.24) + transferCost
+	return round((((price / 10) * 1.24) + transferCost), 2)
 
 class nordpoolAPI:
 	def __init__(self):
@@ -87,4 +88,10 @@ class nordpoolAPI:
 	
 	def testRun(self):
 		print(f'test from: {self.__class__.__name__}')
+	
+	# Will fetch all hourly data points for this api and push them to database
+	def pollNewHourlyData(self):
+		data = self.getCurHour()
+		pushElectricityPrice(data)
+		print(f'{self.__class__.__name__} posted {data} into DB')
 		
