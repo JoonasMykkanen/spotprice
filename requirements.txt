@@ -1,6 +1,0 @@
-python-dotenv
-requests
-nicehash
-nordpool
-tinytuya
-pytz
