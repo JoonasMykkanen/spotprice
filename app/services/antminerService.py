@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:31:22 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 09:39:48 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,3 +84,5 @@ class antminerAPI:
 			return 0
 	
 	# TODO: getters for Temp, Rejection rate, pool status
+	def testRun(self):
+		print(f'test from: {self.__class__.__name__}')

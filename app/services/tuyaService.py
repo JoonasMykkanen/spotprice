@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:53:45 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/20 12:01:13 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -48,6 +48,14 @@ class tuyaAPI:
 
 		return self
 	
+	def testConnection(self):
+		try:
+			self.api.getconnectstatus()
+			print('Tuya connected succesfully')
+		except Exception as e:
+			print(f'TuyaAPI: testConnection: {e}')
+			self.error = True
+	
 	# Will return json object containing a list of rig and their power usage
 	def getPower(self):
 		try:
@@ -73,3 +81,6 @@ class tuyaAPI:
 			print(f'TuyaAPI: getStatus: {e}')
 			self.error = True
 			return "{}"
+	
+	def testRun(self):
+		print(f'test from: {self.__class__.__name__}')

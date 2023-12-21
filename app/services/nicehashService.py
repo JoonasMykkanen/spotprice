@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 09:14:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 11:19:13 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,3 +54,6 @@ class nicehashAPI:
 			print(f'nicehashAPI: getBitcoinPrice: {e}')
 			self.error = True
 			return 0
+
+	def testRun(self):
+		print(f'test from: {self.__class__.__name__}')

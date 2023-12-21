@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 15:03:14 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/20 12:28:57 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -84,4 +84,7 @@ class nordpoolAPI:
 				price_data['end'] = price_data['end'].astimezone(finlandTZ)
 				if (price_data['start'].hour == cur.hour):
 					return calcRealPrice(price_data['value'])
+	
+	def testRun(self):
+		print(f'test from: {self.__class__.__name__}')
 		

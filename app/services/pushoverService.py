@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:13:49 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/20 08:46:41 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:27:46 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,3 +41,6 @@ class pushoverAPI:
 		except Exception as e:
 			print(f'pushoverAPI: testConnection: {e}')
 			self.error = True
+	
+	def testRun(self):
+		print(f'test from: {self.__class__.__name__}')

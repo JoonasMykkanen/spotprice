@@ -6,19 +6,16 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/17 17:30:32 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 11:46:03 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 13:21:07 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
-
-# General imports for app to work
-from flask_cors import CORS
-from config import Config
-from flask import Flask
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from .utils.initExternalApi import initExternalAPI
 from .tasks import hourlyRun
-# from .db import *
+from flask_cors import CORS
+from config import Config
+from flask import Flask
 
 def create_app():
 	# Create flask application
@@ -27,9 +24,6 @@ def create_app():
 	# Get configuration --> .env variables & external api's
 	app.config.from_object(Config)
 	initExternalAPI(app)
-
-	# init database
-	# db.init(path)
 
 	# Creating scheduler for automated data retrieving from api's
 	scheduler = BackgroundScheduler()
