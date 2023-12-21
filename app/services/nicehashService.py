@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 09:14:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:49:13 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 20:16:45 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,6 +14,7 @@ from .databaseService import pushBtcPrice
 from ..utils.nicehash import private_api
 from flask import current_app
 import requests
+import time
 
 from pprint import pprint
 
@@ -52,6 +53,31 @@ class nicehashAPI:
 			print(f'nicehashAPI: getBitcoinPrice: {e}')
 			self.error = True
 			return 0
+		
+	# Returning profitability profitability [BTC / 24 hours] average for past hour
+	# NOTE: 0 is SCRYPT algo id from /main/api/v2/public/buy/info
+	# [0]:   timestamp
+	# [1]:   upaid total amount
+	# [2]: 	 speed accepted
+	# [3-7]: rejections
+	# [8]:   profitability
+	def getProfitability(self):
+		try:
+			start = int(time.time() * 1000)
+			end = start - (3600 * 1000)
+			response = self.api.get_algo_profitability(0, start, end)
+			data = response['data']
+			profits = []
+
+			for entry in data:
+				profits.append(entry[8])
+			
+			average = sum(profits) / len(profits)
+			return average
+		except Exception as e:
+			print(f'nicehashAPI: getProfitability: {e}')
+			self.error = True
+			return 0
 
 	def testRun(self):
 		print(f'test from: {self.__class__.__name__}')
@@ -61,3 +87,4 @@ class nicehashAPI:
 		data = self.getBtcPrice()
 		pushBtcPrice(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
+		return data

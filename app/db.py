@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 14:10:39 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 12:09:48 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 18:50:36 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,6 +53,8 @@ class Profit(BaseModel):
 # Frequency: 60min
 # Content: Float [eur / hour]
 # Example: usage[kWh] * price[snt] converted to eur / hour
+# NOTE: this is combined running costs, individual rigs can
+# be calculated by querying their power usage and spot price
 class Cost(BaseModel):
 	value = FloatField()
 

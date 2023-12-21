@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:53:45 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 15:24:00 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 19:11:16 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -91,3 +91,4 @@ class tuyaAPI:
 		data = self.getPower()
 		pushPowerConsumption(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
+		return data

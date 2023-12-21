@@ -295,12 +295,10 @@ class private_api:
     
     # new additions from "miner private" section of nicehash api
     # tried to follow previous style as closely as possible
-    # def get_rigs(self, algo):
-        # return self.request('GET', '/main/api/v2/mining/rigs', '', None)
-        # return self.request('GET', '/main/api/v2/mining/algo/stats', '', None)
-        # return self.request('GET', '/main/api/v2/mining/rig2/L7', '', None)
-        # query = "algorithm={}".format(algo)
-        # return self.request('GET', '/main/api/v2/mining/rigs/stats/data/algo', query, None)
+    def get_algo_profitability(self, algo, start, end):
+        query = "algorithm={}&afterTimestamp={}&beforeTimestamp={}".format(algo, end, start)
+        return self.request('GET', '/main/api/v2/mining/rigs/stats/algo', query, None)
+    
 
 
 if __name__ == "__main__":

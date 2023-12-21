@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/21 15:28:03 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 15:59:51 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 18:17:14 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,4 +19,4 @@ testBP = Blueprint('test', __name__)
 
 @testBP.route('/')
 def root():
-	return getBtcPrice()
+	return "Test route, nothing to see here if you are not debugging :)"

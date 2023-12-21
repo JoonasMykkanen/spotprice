@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:31:22 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 15:24:57 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 18:35:50 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,3 +92,4 @@ class antminerAPI:
 		data = self.getHashRate()
 		pushHashRate(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
+		return data

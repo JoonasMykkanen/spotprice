@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 15:03:14 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 13:55:15 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 18:42:44 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -94,4 +94,5 @@ class nordpoolAPI:
 		data = self.getCurHour()
 		pushElectricityPrice(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
+		return data
 		

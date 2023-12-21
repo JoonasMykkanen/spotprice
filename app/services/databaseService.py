@@ -6,15 +6,15 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/21 11:03:02 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 16:14:23 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/21 19:14:03 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Contains push and get functions for each table in database
 
-from pprint import pprint
 from flask import jsonify
 from ..db import *
+import json
 
 # TABLE: bitcoin price getter and setter
 def pushBtcPrice(data):
@@ -31,7 +31,7 @@ def getBtcPrice():
             response = {}
             data = priceBTC.select()
             for entry in data:
-                response[entry.timestamp] = {'price': entry.value}
+                response[entry.timestamp] = {'value': entry.value}
             return jsonify(response)
         except Exception as e:
             print(f'Database: getBtcPrice: {e}')
@@ -53,7 +53,7 @@ def getElectricityPrice():
             response = {}
             data = ElectricityPrice.select()
             for entry in data:
-                response[entry.timestamp] = {'price': entry.value}
+                response[entry.timestamp] = {'value': entry.value}
             return jsonify(response)
         except Exception as e:
             print(f'Database: getElectricityPrice: {e}')
@@ -76,7 +76,8 @@ def getPowerConsumption():
             response = {}
             data = PowerConsumption.select()
             for entry in data:
-                    response[entry.timestamp] = {'price': entry.value}
+                jsonData = entry.value
+                response[entry.timestamp.isoformat()] = {'value': jsonData}
             return jsonify(response)
         except Exception as e:
             print(f'Database: getPowerConsumption: {e}')
@@ -99,7 +100,7 @@ def getHashRate():
             response = {}
             data = HashRate.select()
             for entry in data:
-                response[entry.timestamp] = {'price': entry.value}
+                response[entry.timestamp] = {'value': entry.value}
             return jsonify(response)
         except Exception as e:
             print(f'Database: getHashRate: {e}')
@@ -122,7 +123,30 @@ def getCost():
             response = {}
             data = Cost.select()
             for entry in data:
-                response[entry.timestamp] = {'price': entry.value}
+                response[entry.timestamp] = {'value': entry.value}
+            return jsonify(response)
+        except Exception as e:
+            print(f'Database: getCost: {e}')
+            return jsonify({'error': str(e)})
+
+
+
+# TABLE: profit price data price getter and setter
+def pushProfit(data):
+    with db.atomic():
+        try:
+            newEntry = Profit.create(value=data)
+            newEntry.save()
+        except Exception as e:
+            print(f'Database: pushProfit: {e}')
+
+def getProfit():
+    with db.atomic():
+        try:
+            response = {}
+            data = Profit.select()
+            for entry in data:
+                response[entry.timestamp] = {'value': entry.value}
             return jsonify(response)
         except Exception as e:
             print(f'Database: getCost: {e}')
