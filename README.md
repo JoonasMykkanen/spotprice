@@ -8,3 +8,9 @@
   - Gathers Finlands electricity spot price data to automate server run time
   - Records server performance stats and stores data in database
   - Uses multiple other api's to access data
+
+
+### Project outline:
+  - Python / Flask backend
+  - Reack Frontend
+  - SQLite database
