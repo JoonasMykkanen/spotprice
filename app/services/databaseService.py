@@ -6,15 +6,16 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/21 11:03:02 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 19:14:03 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/23 07:42:14 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # Contains push and get functions for each table in database
 
-from flask import jsonify
+# TODO: Check if responses should be in json fromat
+# from flask import jsonify
 from ..db import *
-import json
+# import json
 
 # TABLE: bitcoin price getter and setter
 def pushBtcPrice(data):
@@ -32,10 +33,10 @@ def getBtcPrice():
             data = priceBTC.select()
             for entry in data:
                 response[entry.timestamp] = {'value': entry.value}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getBtcPrice: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
 
 
 # TABLE: Electricity price data price getter and setter
@@ -54,10 +55,10 @@ def getElectricityPrice():
             data = ElectricityPrice.select()
             for entry in data:
                 response[entry.timestamp] = {'value': entry.value}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getElectricityPrice: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
 
 
 
@@ -78,10 +79,10 @@ def getPowerConsumption():
             for entry in data:
                 jsonData = entry.value
                 response[entry.timestamp.isoformat()] = {'value': jsonData}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getPowerConsumption: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
 
 
 
@@ -101,10 +102,10 @@ def getHashRate():
             data = HashRate.select()
             for entry in data:
                 response[entry.timestamp] = {'value': entry.value}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getHashRate: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
 
 
 
@@ -124,10 +125,10 @@ def getCost():
             data = Cost.select()
             for entry in data:
                 response[entry.timestamp] = {'value': entry.value}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getCost: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
 
 
 
@@ -147,7 +148,31 @@ def getProfit():
             data = Profit.select()
             for entry in data:
                 response[entry.timestamp] = {'value': entry.value}
-            return jsonify(response)
+            return response
         except Exception as e:
             print(f'Database: getCost: {e}')
-            return jsonify({'error': str(e)})
+            return {'error': str(e)}
+
+
+
+# TABLE: revenue data getter and setter
+def pushRevenue(data):
+    with db.atomic():
+        try:
+            newEntry = Revenue.create(value=data)
+            newEntry.save()
+        except Exception as e:
+            print(f'Database: pushRevenue: {e}')
+            return {'error': str(e)}
+
+def getRevenue():
+    with db.atomic():
+        try:
+            response = {}
+            data = Profit.select()
+            for entry in data:
+                response[entry.timestamp] = {'value': entry.value}
+            return response
+        except Exception as e:
+            print(f'Database: getCost: {e}')
+            return {'error': str(e)}
