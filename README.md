@@ -12,5 +12,5 @@
 
 ### Project outline:
   - Python / Flask backend
-  - Reack Frontend
+  - React Frontend
   - SQLite database
