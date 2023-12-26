@@ -1,0 +1,179 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   App.css                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/26 08:52:57 by jmykkane          #+#    #+#             */
+/*   Updated: 2023/12/26 13:40:27 by jmykkane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+.App {
+	background-color: #1c1c1e;
+	height: 100vh;
+	padding: 0;
+	margin: 0;
+}
+
+
+
+/* Nav bar */
+.Nav {
+	justify-content: center;
+	display: flex;
+}
+
+.HeaderName {
+	background-color: #101010;
+	padding-bottom: 5px;
+	padding-right: 30px;
+	border-radius: 30px;
+	padding-left: 30px;
+	padding-top: 5px;
+	color: white;
+}
+
+
+
+/* Card */
+.grid {
+	justify-content: center;
+	margin-top: 2vh;
+	display: flex;
+}
+
+.grid-container {
+	grid-template-columns: repeat(4, 1fr);
+	display: grid;
+	width: 90vw;
+	gap: 20px;
+}
+  
+  .grid-item {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+	justify-content: center;
+	background: #2c2c2e;
+	border-radius: 20px;
+	display: flex;
+
+}
+
+.grid-header {
+	justify-content: center;
+	align-items: center;
+	display: flex;
+}
+
+.grid-header h1 {
+	margin-bottom: 5px;
+	font-size: 35px;
+	color: white;
+}
+
+.horizontal { grid-column: span 2; grid-row: span 1; }
+.vertical { grid-column: span 1; grid-row: span 2; }
+.square { aspect-ratio: 1 / 1; grid-column: span 1; grid-row: span 1; }
+
+
+
+/* Stats */
+.stats p {
+	font-size: 20px;
+	color: white;
+}
+
+.dot {
+	padding-left: 10px;
+	padding-right: 0;
+}
+
+.stats-online, .stats-offline {
+	font-size: 20px !important;
+}
+
+.stats-online {
+	position: relative;
+
+	border-color: lightgreen;
+
+	border-radius: 2px;
+	border-style: solid;
+	border-radius: 25px;
+	
+	padding-right: 30px;
+	padding-left: 10px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+ 
+.stats-online::after {
+	content: '';
+	position: absolute;
+	right: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 17.5px;
+	height: 17.5px;
+	background-color: lightgreen;
+	border-radius: 50%;
+}
+
+.stats-offline {
+	position: relative;
+
+	border-color: lightcoral;
+
+	border-radius: 2px;
+	border-style: solid;
+	border-radius: 25px;
+	
+	padding-right: 10px;
+	padding-left: 30px;
+	padding-top: 1px;
+	padding-bottom: 1px;
+}
+
+.stats-offline::before {
+	content: '';
+	position: absolute;
+	left: 5px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 17.5px;
+	height: 17.5px;
+	background-color: lightcoral;
+	border-radius: 50%;
+}
+
+.info-item {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	margin-top: 10px;
+}
+
+.info-item h2 {
+	font-size: 17.5px;
+	color: #6e6e6e;
+	padding: 0;
+	margin: 0;
+}
+
+.info-item p {
+	font-size: 25px;
+	margin: 0;
+	padding: 0;
+	color: white;
+}
+
+
+
+/* Today */
+.today {
+	align-items: flex-start;
+	flex-direction: column;
+	display: flex;
+}

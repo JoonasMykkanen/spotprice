@@ -1,0 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   index.css                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/12/26 08:57:07 by jmykkane          #+#    #+#             */
+/*   Updated: 2023/12/26 10:02:48 by jmykkane         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+body {
+	font-family: 'Helvetica Neue', Arial, sans-serif;
+
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	
+	padding: 0;	
+	margin: 0;
+}

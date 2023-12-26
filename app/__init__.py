@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/17 17:30:32 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/24 11:54:21 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/26 11:13:00 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,6 +18,7 @@ from flask import Flask
 from .utils.initExternalApi import initExternalAPI
 from .tasks import hourlyRun
 
+from .routes.data import dataBP
 from .routes.test import testBP
 from .routes.api import apiBP
 
@@ -27,6 +28,7 @@ def create_app():
 
 	# Register all blueprints / routes
 	app.register_blueprint(testBP, url_prefix='/test')
+	app.register_blueprint(dataBP, url_prefix='/data')
 	app.register_blueprint(apiBP, url_prefix='/api')
 
 	# Get configuration --> .env variables & external api's

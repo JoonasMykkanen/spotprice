@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 12:31:22 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/23 08:04:45 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/26 13:04:59 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,7 +65,7 @@ class antminerAPI:
 		try:
 			self.getMinerStats()
 			data = self.stats['STATS'][0]['rate_30m']
-			return data
+			return round(data, 2)
 		except Exception as e:
 			print(f'antminerAPI: getHashRate: {e}')
 			self.error = True
