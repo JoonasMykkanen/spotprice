@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 15:03:14 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 18:42:44 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/24 12:11:40 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,9 +16,10 @@ from datetime import datetime
 from nordpool import elspot
 import pytz
 
-transferCost = 6.59
-defaultPrice = 10
-FINLAND = ['FI']
+transferCost = 6.59	# snt / kWh
+defaultPrice = 10	# snt / kWh
+FINLAND = ['FI']	# Area code
+threshold = 20		# snt / kWh
 
 # Helper function to return actual cost of electricity [eur / kWh]
 def calcRealPrice(price):
@@ -26,6 +27,7 @@ def calcRealPrice(price):
 
 class nordpoolAPI:
 	def __init__(self):
+		self.threshold = threshold
 		self.error = False
 		self.api = None
 	
@@ -95,4 +97,12 @@ class nordpoolAPI:
 		pushElectricityPrice(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
 		return data
-		
+	
+	# returns current threshold value
+	def getThreshold(self):
+		return self.threshold
+	
+	# calculates new threshold
+	# TODO: Finish logic for this
+	def setThreshold(self):
+		pass

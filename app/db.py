@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 14:10:39 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/23 07:33:56 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/24 16:06:10 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -77,5 +77,6 @@ db.create_tables([
 	priceBTC,
 	HashRate,
 	Revenue,
+	Profit,
 	Cost
 ])

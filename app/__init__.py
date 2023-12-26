@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/17 17:30:32 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/23 07:33:00 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/24 11:54:21 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,7 +37,7 @@ def create_app():
 
 	# Creating scheduler for automated data retrieving from api's
 	scheduler = BackgroundScheduler()
-	scheduler.add_job(lambda: hourlyRun(app), 'interval', seconds=5)
+	scheduler.add_job(lambda: hourlyRun(app), 'cron', minute=55)
 	scheduler.start()
 
 	# Use cors to make react frontend able to connect

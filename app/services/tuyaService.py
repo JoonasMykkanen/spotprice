@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:53:45 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 19:11:16 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/24 15:15:30 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -92,3 +92,34 @@ class tuyaAPI:
 		pushPowerConsumption(data)
 		print(f'{self.__class__.__name__} posted {data} into DB')
 		return data
+	
+	# get specific rig status with index
+	def getBoolMode(self, rigIndex):
+		try:
+			rig = self.rigs[rigIndex]
+			response = rig.getRigStatus()
+			return response
+		except Exception as e:
+			print(f'TuyaAPI: getStatus: {e}')
+			self.error = True
+			return False
+	
+	def switch(self, target):
+		for idx in range(0, rigCount):
+			currentMode = self.getBoolMode(idx)
+			rig = self.rigs[idx]
+			
+			# Switching on since target is TRUE and it's currently off
+			if target is True and currentMode is False:
+				newStatus = rig.switchOn()
+			# Switching off since current is True and target is False
+			elif target is False and currentMode is True:
+				newStatus = rig.switchOff()
+			else:
+				newStatus = rig.getRigStatus()
+			
+			return newStatus
+
+			
+
+

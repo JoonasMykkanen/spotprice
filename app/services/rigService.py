@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 11:09:25 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/21 15:25:46 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/24 15:12:58 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -51,17 +51,19 @@ class Rig:
 			print('Rig: switchOff: {e}')
 			self.error = True
 		self.updateStatus()
+		return self.status
 		
 	def switchOn(self):
 		try:
 			self.api.sendcommand(self.socket0, TURN_ON)
-			print(f'socket: {self.index} turned off')
+			print(f'socket: {self.index} turned on')
 			self.api.sendcommand(self.socket1, TURN_ON)
-			print(f'socket: {self.index} turned off')
+			print(f'socket: {self.index} turned on')
 		except Exception as e:
 			print('Rig: switchOff: {e}')
 			self.error = True
 		self.updateStatus()
+		return self.status
 
 	# Retrieve status from server and update local variable accordingly
 	def updateStatus(self):
