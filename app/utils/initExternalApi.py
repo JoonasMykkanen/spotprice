@@ -6,7 +6,7 @@
 #    By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/12/19 10:29:43 by jmykkane          #+#    #+#              #
-#    Updated: 2023/12/24 11:52:32 by jmykkane         ###   ########.fr        #
+#    Updated: 2023/12/27 12:30:49 by jmykkane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,3 +24,4 @@ def initExternalAPI(app):
 		app.config['antminerAPI'] = antminerAPI().setup()
 		app.config['nordpoolAPI'] = nordpoolAPI().setup()
 		app.config['tuyaAPI'] = tuyaAPI().setup()
+	# pass # TODO: REMOVE when no longed debugging

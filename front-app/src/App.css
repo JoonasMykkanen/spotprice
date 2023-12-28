@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 08:52:57 by jmykkane          #+#    #+#             */
-/*   Updated: 2023/12/26 13:40:27 by jmykkane         ###   ########.fr       */
+/*   Updated: 2023/12/27 14:09:31 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@
 	background: #2c2c2e;
 	border-radius: 20px;
 	display: flex;
-
+	min-height: 100%;
 }
 
 .grid-header {
@@ -72,8 +72,8 @@
 	color: white;
 }
 
-.horizontal { grid-column: span 2; grid-row: span 1; }
-.vertical { grid-column: span 1; grid-row: span 2; }
+.horizontal { aspect-ratio: calc(2 / 1 - 20px); grid-column: span 2; grid-row: span 1; }
+.vertical { aspect-ratio: calc(1 / 2 + 20px) ; grid-column: span 1; grid-row: span 2; }
 .square { aspect-ratio: 1 / 1; grid-column: span 1; grid-row: span 1; }
 
 
@@ -176,4 +176,15 @@
 	align-items: flex-start;
 	flex-direction: column;
 	display: flex;
+}
+
+
+
+/* Chart */
+.chart {
+	justify-content: center;
+	align-items: center;
+	display: flex;
+
+	width: 100%;
 }

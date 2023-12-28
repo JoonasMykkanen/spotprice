@@ -6,7 +6,7 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 09:43:06 by jmykkane          #+#    #+#             */
-/*   Updated: 2023/12/26 13:34:27 by jmykkane         ###   ########.fr       */
+/*   Updated: 2023/12/27 11:21:33 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,6 @@ const Stats = () => {
         console.log('fetching stats')
         const response = await axios.get('/data/stats')
         const data = response.data
-        console.log(response.data)
 
         setOldRate(hashrate)
         setHashrate(data.hashrate)
@@ -56,7 +55,6 @@ const Stats = () => {
       } catch(error) {
         console.log('Error on fetchStats: ', error)
       }
-
     }
     
     fetchStats()

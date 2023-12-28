@@ -6,10 +6,11 @@
 /*   By: jmykkane <jmykkane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/12/26 09:20:37 by jmykkane          #+#    #+#             */
-/*   Updated: 2023/12/26 13:38:30 by jmykkane         ###   ########.fr       */
+/*   Updated: 2023/12/27 13:41:06 by jmykkane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+import Chart from './chart'
 import Stats from './stats'
 import Today from './today'
 
@@ -30,7 +31,7 @@ const Grid = () => {
           <Today />
         </div>
         <div className="grid-item horizontal">
-          
+          <Chart />
         </div>
       </div>
     </div>
