@@ -16,4 +16,4 @@
   - SQLite database
 
 ### Project still under construction
-![GitHub Logo](https://github.com/joonasmykkanen/spotprice/raw/master/resources/Screenshot\img.png)
+![GitHub Logo](https://github.com/joonasmykkanen/spotprice/tree/main/resources/img.png)
