@@ -1,4 +1,4 @@
-# spotprice backend application
+# Home server automation dashboard
 
 ### Problem: need to automate home server based on electricity price
 
@@ -8,7 +8,6 @@
   - Gathers Finlands electricity spot price data from Nordpool API to automate server run time
   - Records server performance stats and stores data in database
   - Uses multiple other api's to access data such as CoinGecko, NiceHash and the server itself
-
 
 ### Project outline:
   - Python / Flask backend
