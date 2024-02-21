@@ -1,4 +1,4 @@
-# NOTE: Still under development
+### Project still under construction
 
 # Home server automation dashboard
 
@@ -16,5 +16,4 @@
   - React Frontend
   - SQLite database
 
-### Project still under construction
 ![GitHub Logo](https://github.com/JoonasMykkanen/spotprice/blob/2f2bb87cc2fe9f757979375efc8b421e7827f276/resources/img.png)
