@@ -1,3 +1,5 @@
+# NOTE: Still under development
+
 # Home server automation dashboard
 
 ### Problem: need to automate home server based on electricity price
